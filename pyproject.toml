@@ -40,6 +40,8 @@ run = 'fastapi dev ordo_fast/app.py'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=ordo_fast -vv'
 post_test = 'coverage html'
+commit = 'git commit -m'
+post_commit = 'git push origin main'
 
 [build-system]
 requires = ["poetry-core"]
