@@ -45,6 +45,10 @@ test = 'pytest -s -x --cov=ordo_fast -vv'
 post_test = 'coverage html'
 commit = 'git commit -m'
 post_commit = 'git push origin main'
+create_migrations = 'alembic revision --autogenerate -m'
+migrate = 'alembic upgrade'
+demigrate = 'alembic downgrade'
+shell_db = 'python -m sqlite3 database.db'
 
 [build-system]
 requires = ["poetry-core"]

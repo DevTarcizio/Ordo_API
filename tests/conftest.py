@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
 
 from ordo_fast.app import app
-from ordo_fast.models import table_regristy
+from ordo_fast.models import table_registry
 
 
 @pytest.fixture
@@ -19,12 +19,14 @@ def client():
 def session():
     engine = create_engine('sqlite:///:memory:')
 
-    table_regristy.metadata.create_all(engine)
+    # Cria todas as tabelas para realizar teste
+    table_registry.metadata.create_all(engine)
 
     with Session(engine) as session:
         yield session
 
-    table_regristy.metadata.drop_all(engine)
+    # Apaga todas as tabelas para realizar teste
+    table_registry.metadata.drop_all(engine)
 
 
 @contextmanager
@@ -32,6 +34,8 @@ def _mock_db_time(*, model, time=datetime(2025, 5, 20)):
     def fake_time_hook(mapper, connection, target):
         if hasattr(target, 'created_at'):
             target.created_at = time
+        if hasattr(target, 'update_at'):
+            target.update_at = time
 
     event.listen(model, 'before_insert', fake_time_hook)
 
