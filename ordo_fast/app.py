@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from ordo_fast.database import get_session
 from ordo_fast.models import User
 from ordo_fast.schemas import Message, UserList, UserPublic, UserSchema
+from ordo_fast.security import get_password_hash
 
 app = FastAPI(title='Ordo Praesidium')
 database = []
@@ -44,7 +45,9 @@ def create_user(user: UserSchema, session: Session = Depends(get_session)):
     # caso não haja nada igual, passa os valores que vieram do post para o db_user
     # e depois salva na session
     db_user = User(
-        username=user.username, email=user.email, password=user.password
+        username=user.username,
+        email=user.email,
+        password=get_password_hash(user.password),
     )
 
     session.add(db_user)
@@ -99,7 +102,7 @@ def update_user(
         # realiza a edição do usuário
         user_db.username = user.username
         user_db.email = user.email
-        user_db.password = user.password
+        user_db.password = get_password_hash(user.password)
 
         # como o usuário já existe, nao fazemos um add, apenas o commit
         session.commit()
