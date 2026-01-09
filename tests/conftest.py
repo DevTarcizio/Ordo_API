@@ -10,6 +10,7 @@ from sqlalchemy.pool import StaticPool
 from ordo_fast.app import app
 from ordo_fast.database import get_session
 from ordo_fast.models import User, table_registry
+from ordo_fast.security import get_password_hash
 
 
 @pytest.fixture
@@ -73,11 +74,25 @@ def mock_db_time():
 
 @pytest.fixture
 def user(session: Session):
+    password = 'secret'
     user_test = User(
-        username='alice', email='alice@example.com', password='secret'
+        username='alice',
+        email='alice@example.com',
+        password=get_password_hash(password),
     )
     session.add(user_test)
     session.commit()
     session.refresh(user_test)
 
+    user_test.clean_password = password  # type: ignore
+
     return user_test
+
+
+@pytest.fixture
+def token(client, user):
+    response = client.post(
+        '/token', data={'username': user.email, 'password': user.clean_password}
+    )
+
+    return response.json()['access_token']
