@@ -11,17 +11,15 @@ from sqlalchemy.orm import Session
 
 from ordo_fast.database import get_session
 from ordo_fast.models import User
+from ordo_fast.settings import Settings
 
 # constantes para a criação do token
-SECRET_KEY = 'my_secret_key'  # Isso é provisório depois trocar por um hash secret
-ALGORITHM = 'HS256'  # algoritmo usado nessa codificação
-ACCESS_TOKEN_EXPIRE_MINUTES = 30  # tempo de expiração do token
 
 # Configuração padrão do pwd
 pwd_context = PasswordHash.recommended()
 
 # ler o token jwt enviado no header
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
 def get_password_hash(password: str):
@@ -41,12 +39,16 @@ def create_access_token(data: dict):
     # Fazemos o calculo com a time zone UTC para o tempo de expiração ser de
     # 30 minutos e então adicionamos essa claim
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES # type: ignore
     )
     to_encode.update({'exp': expire})
 
     # Fazemos o encode do token, e o retornamos
-    encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = encode(
+        to_encode, 
+        Settings().SECRET_KEY, # type: ignore
+        algorithm=Settings().ALGORITHM # type: ignore
+    )
     return encoded_jwt
 
 
@@ -60,7 +62,11 @@ def get_current_user(
     )
 
     try:
-        payload = decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        payload = decode(
+            token, 
+            Settings().SECRET_KEY, # type: ignore
+            algorithms=Settings().ALGORITHM # type: ignore
+        )
         subject_email = payload.get('sub')
         if not subject_email:
             raise credentials_exception

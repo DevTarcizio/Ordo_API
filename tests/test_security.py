@@ -2,14 +2,19 @@ from http import HTTPStatus
 
 from jwt import decode
 
-from ordo_fast.security import ALGORITHM, SECRET_KEY, create_access_token
+from ordo_fast.security import create_access_token
+from ordo_fast.settings import Settings
 
 
 def test_access_create_token():
     data = {'teste': 'testado'}
     token = create_access_token(data)
 
-    decoded_token = decode(token, SECRET_KEY, algorithms=ALGORITHM)
+    decoded_token = decode(
+        token, 
+        Settings().SECRET_KEY, # type: ignore
+        algorithms=Settings().ALGORITHM # type: ignore
+    )
     assert decoded_token['teste'] == data['teste']
     assert 'exp' in decoded_token
 

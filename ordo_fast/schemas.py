@@ -25,3 +25,8 @@ class UserList(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class FilterPage(BaseModel):
+    limit: int = 10  # Define a quantidade máxima de registro por página
+    offset: int = 0  # Define quantos registros vai pular

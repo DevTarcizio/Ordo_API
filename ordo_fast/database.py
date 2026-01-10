@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from ordo_fast.settings import Settings
 
-engine = create_engine(Settings().DATABASE_URL)
+engine = create_engine(Settings().DATABASE_URL) # type: ignore
 
 
 def get_session():
