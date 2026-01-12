@@ -11,9 +11,9 @@ def test_access_create_token():
     token = create_access_token(data)
 
     decoded_token = decode(
-        token, 
-        Settings().SECRET_KEY, # type: ignore
-        algorithms=Settings().ALGORITHM # type: ignore
+        token,
+        Settings().SECRET_KEY,  # type: ignore
+        algorithms=Settings().ALGORITHM,  # type: ignore
     )
     assert decoded_token['teste'] == data['teste']
     assert 'exp' in decoded_token

@@ -39,15 +39,15 @@ def create_access_token(data: dict):
     # Fazemos o calculo com a time zone UTC para o tempo de expiração ser de
     # 30 minutos e então adicionamos essa claim
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES # type: ignore
+        minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES  # type: ignore
     )
     to_encode.update({'exp': expire})
 
     # Fazemos o encode do token, e o retornamos
     encoded_jwt = encode(
-        to_encode, 
-        Settings().SECRET_KEY, # type: ignore
-        algorithm=Settings().ALGORITHM # type: ignore
+        to_encode,
+        Settings().SECRET_KEY,  # type: ignore
+        algorithm=Settings().ALGORITHM,  # type: ignore
     )
     return encoded_jwt
 
@@ -63,9 +63,9 @@ def get_current_user(
 
     try:
         payload = decode(
-            token, 
-            Settings().SECRET_KEY, # type: ignore
-            algorithms=Settings().ALGORITHM # type: ignore
+            token,
+            Settings().SECRET_KEY,  # type: ignore
+            algorithms=Settings().ALGORITHM,  # type: ignore
         )
         subject_email = payload.get('sub')
         if not subject_email:
