@@ -22,12 +22,12 @@ def test_create_user(client):
     }
 
 
-def test_create_user_error_username(client, user):
+def test_create_user_error_username(client, user_defined):
     response = client.post(
         '/users/',
         json={
             'username': 'alice',
-            'email': 'bob@example.com',
+            'email': 'alice@example.com',
             'password': 'secret',
         },
     )
@@ -36,7 +36,7 @@ def test_create_user_error_username(client, user):
     assert response.json() == {'detail': 'Username already exists'}
 
 
-def test_create_user_error_email(client, user):
+def test_create_user_error_email(client, user_defined):
     response = client.post(
         '/users/',
         json={
@@ -91,9 +91,9 @@ def test_update_user(client, user, token):
     }
 
 
-def test_user_trying_update_another_user_error(client, user, token):
+def test_user_trying_update_another_user_error(client, other_user, token):
     response = client.put(
-        '/users/2',
+        f'/users/{other_user.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'bob',
@@ -106,24 +106,14 @@ def test_user_trying_update_another_user_error(client, user, token):
     assert response.json() == {'detail': 'Not enough permission'}
 
 
-def test_update_user_integrity_error(client, user, token):
-    client.post(
-        '/users/',
-        headers={'Authorization': f'Bearer {token}'},
-        json={
-            'username': 'bob',
-            'email': 'bob@example.com',
-            'password': 'secret',
-        },
-    )
-
+def test_update_user_integrity_error(client, user, other_user, token):
     response = client.put(
         f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
-            'username': 'alice',
-            'email': 'bob@example.com',
-            'password': 'secret',
+            'username': other_user.username,
+            'email': other_user.email,
+            'password': other_user.password,
         },
     )
 
@@ -139,15 +129,15 @@ def test_delete_user(client, user, token):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'username': 'alice',
-        'email': 'alice@example.com',
-        'id': 1,
+        'username': user.username,
+        'email': user.email,
+        'id': user.id,
     }
 
 
-def test_delete_user_error(client, user, token):
+def test_delete_user_error(client, other_user, token):
     response = client.delete(
-        '/users/2', headers={'Authorization': f'Bearer {token}'}
+        f'/users/{other_user.id}', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
