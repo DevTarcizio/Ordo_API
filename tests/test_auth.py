@@ -1,7 +1,10 @@
 from http import HTTPStatus
 
+import pytest
 
-def test_token_route(client, user):
+
+@pytest.mark.asyncio
+async def test_token_route(client, user):
     response = client.post(
         '/auth/token/',
         data={'username': user.email, 'password': user.clean_password},
@@ -14,7 +17,8 @@ def test_token_route(client, user):
     assert 'access_token' in token
 
 
-def test_token_route_error_email(client, user):
+@pytest.mark.asyncio
+async def test_token_route_error_email(client, user):
     response = client.post(
         '/auth/token/',
         data={'username': user.username, 'password': user.password},
@@ -24,7 +28,8 @@ def test_token_route_error_email(client, user):
     assert response.json() == {'detail': 'Incorrect Email'}
 
 
-def test_token_route_error_password(client, user):
+@pytest.mark.asyncio
+async def test_token_route_error_password(client, user):
     response = client.post(
         '/auth/token/', data={'username': user.email, 'password': user.password}
     )
