@@ -29,9 +29,7 @@ class User:
     )
 
     tasks: Mapped[list['Task']] = relationship(
-        init=False,
-        cascade='all, delete-orphan',
-        lazy='selectin'
+        init=False, cascade='all, delete-orphan', lazy='selectin'
     )
 
 
