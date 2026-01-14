@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 from datetime import datetime
 
-import factory
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
@@ -13,6 +12,8 @@ from ordo_fast.app import app
 from ordo_fast.database import get_session
 from ordo_fast.models import User, table_registry
 from ordo_fast.security import get_password_hash
+
+from .factories import UserFactory
 
 
 @pytest.fixture
@@ -131,12 +132,3 @@ def token(client, user):
     )
 
     return response.json()['access_token']
-
-
-class UserFactory(factory.Factory):  # type: ignore
-    class Meta:  # type: ignore
-        model = User
-
-    username = factory.Sequence(lambda n: f'test{n}')  # type: ignore
-    email = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')  # type: ignore
-    password = factory.LazyAttribute(lambda obj: f'{obj.username}1301')  # type: ignore
