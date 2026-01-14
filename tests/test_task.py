@@ -1,24 +1,62 @@
 from http import HTTPStatus
 
 import pytest
+from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+from ordo_fast.models import Task
 
 from .factories import TaskFactory
 
 
-def test_create_task(client, token):
-    response = client.post(
-        '/task/create',
-        headers={'Authorization': f'Bearer {token}'},
-        json={'title': 'task test', 'description': 'desc test', 'state': 'todo'},
-    )
+def test_create_task(client, token, mock_db_time):
+
+    with mock_db_time(model=Task) as time:
+        response = client.post(
+            '/task/create',
+            headers={'Authorization': f'Bearer {token}'},
+            json={
+                'title': 'task test',
+                'description': 'desc test',
+                'state': 'todo',
+            },
+        )
 
     assert response.json() == {
         'id': 1,
         'title': 'task test',
         'description': 'desc test',
         'state': 'todo',
+        'created_at': time.isoformat(),
+        'updated_at': time.isoformat(),
     }
+
+@pytest.mark.asyncio
+async def test_list_tasks_validate_values(
+    session, token, user, mock_db_time, client
+):
+
+    with mock_db_time(model=Task) as time:
+        task = TaskFactory(user_id=user.id)
+        session.add(task)
+        await session.commit()
+
+    await session.refresh(task)
+
+    response = client.get(
+        '/task/list', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.json()['tasks'] == [
+        {
+            'title': task.title,
+            'description': task.description,
+            'state': task.state.value,
+            'id': task.id,
+            'created_at': time.isoformat(),
+            'updated_at': time.isoformat(),
+        }
+    ]
 
 
 @pytest.mark.asyncio

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 from ordo_fast.models import TaskState
@@ -13,12 +15,6 @@ class UserSchema(BaseModel):
     password: str
 
 
-class TaskSchema(BaseModel):
-    title: str
-    description: str
-    state: TaskState
-
-
 class UserPublic(BaseModel):
     username: str
     email: EmailStr
@@ -26,16 +22,8 @@ class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class TaskPublic(TaskSchema):
-    id: int
-
-
 class UserList(BaseModel):
     users: list[UserPublic]
-
-
-class TaskList(BaseModel):
-    tasks: list[TaskPublic]
 
 
 class Token(BaseModel):
@@ -52,6 +40,22 @@ class FilterTask(FilterPage):
     title: str | None = None
     description: str | None = None
     state: TaskState | None = None
+
+
+class TaskSchema(BaseModel):
+    title: str
+    description: str
+    state: TaskState
+
+
+class TaskPublic(TaskSchema):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class TaskList(BaseModel):
+    tasks: list[TaskPublic]
 
 
 class TaskUpdate(BaseModel):
