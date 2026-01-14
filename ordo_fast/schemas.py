@@ -1,7 +1,5 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
-from ordo_fast.models import TaskState
-
 
 class Message(BaseModel):
     message: str
@@ -23,7 +21,6 @@ class UserPublic(BaseModel):
 class UserList(BaseModel):
     users: list[UserPublic]
 
-
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -32,13 +29,3 @@ class Token(BaseModel):
 class FilterPage(BaseModel):
     limit: int = 10  # Define a quantidade máxima de registro por página
     offset: int = 0  # Define quantos registros vai pular
-
-
-class TaskSchema(BaseModel):
-    title: str
-    description: str
-    state: TaskState
-
-
-class TaskPublic(TaskSchema):
-    id: int
