@@ -1,7 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env sh
+set -e
 
-# Executa as migrações do banco de dados
-poetry run alembic upgrade head
+echo "➡️ Rodando migrations..."
+alembic upgrade head
 
-# Inicia a aplicação
-poetry run uvicorn --host 0.0.0.0 --port 8000 ordo_fast.app:app
+echo "🚀 Iniciando API..."
+exec "$@"

@@ -12,7 +12,13 @@ COPY pyproject.toml poetry.lock* ./
 RUN poetry config installer.max-workers 10
 RUN poetry install --no-interaction --no-ansi --without dev --no-root
 
+# Copia o entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 COPY . .
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 10000
 CMD ["uvicorn", "ordo_fast.app:app", "--host", "0.0.0.0", "--port", "10000"]
