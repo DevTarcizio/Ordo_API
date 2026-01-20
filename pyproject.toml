@@ -14,7 +14,6 @@ alembic = "^1.17.2"
 pwdlib = {extras = ["argon2"], version = "^0.3.0"}
 pyjwt = "^2.10.1"
 tzdata = "^2025.3"
-aiosqlite = "^0.22.1"
 psycopg = {extras = ["binary"], version = "^3.3.2"}
 
 
