@@ -10,7 +10,7 @@ COPY pyproject.toml poetry.lock* ./
 
 
 RUN poetry config installer.max-workers 10
-RUN poetry install --no-interaction --no-ansi --without dev
+RUN poetry install --no-interaction --no-ansi --without dev --no-root
 
 COPY . .
 
