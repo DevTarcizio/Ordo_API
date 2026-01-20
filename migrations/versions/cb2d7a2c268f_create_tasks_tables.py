@@ -1,8 +1,8 @@
-"""create task tables and adding relantioship with users table
+"""create tasks tables
 
-Revision ID: 39d783bd1efb
+Revision ID: cb2d7a2c268f
 Revises: 458aa891c0d3
-Create Date: 2026-01-13 23:21:32.439524
+Create Date: 2026-01-19 15:45:16.416775
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '39d783bd1efb'
+revision: str = 'cb2d7a2c268f'
 down_revision: Union[str, Sequence[str], None] = '458aa891c0d3'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

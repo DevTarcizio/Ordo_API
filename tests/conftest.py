@@ -6,7 +6,7 @@ import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.pool import StaticPool
+from testcontainers.postgres import PostgresContainer
 
 from ordo_fast.app import app
 from ordo_fast.database import get_session
@@ -33,25 +33,23 @@ def client(session: AsyncSession):
     app.dependency_overrides.clear()
 
 
+@pytest.fixture(scope='session')
+def engine():
+    # levantamos o container da DB para execução dos testes
+    with PostgresContainer('postgres:17', driver='psycopg') as postgres:
+        yield create_async_engine(postgres.get_connection_url())  # type: ignore
+
+
 @pytest_asyncio.fixture
-async def session():
+async def session(engine):
 
-    # Criamos o banco em memória, desligamos a verificação de mesma thread para os
-    # testes
-
-    engine = create_async_engine(
-        'sqlite+aiosqlite:///:memory:',
-        connect_args={'check_same_thread': False},
-        poolclass=StaticPool,
-    )
-
-    # o with permite que tenha um commit automático no fim, e ao invés de usarmos
+    # o with permite que tenha um commit automático no fim, e ao invés de
+    # usarmos
     # uma session, usamos uma conexão
     async with engine.begin() as conn:
         # run sync para criarmos as tabelas de forma sicrona para não
         # acontecer confusões na criação
         await conn.run_sync(table_registry.metadata.create_all)
-
     # criamos a session para ser usada
     async with AsyncSession(engine, expire_on_commit=False) as session:
         yield session

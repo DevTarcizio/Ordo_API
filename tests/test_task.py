@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 import pytest
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ordo_fast.models import Task
@@ -30,6 +29,7 @@ def test_create_task(client, token, mock_db_time):
         'created_at': time.isoformat(),
         'updated_at': time.isoformat(),
     }
+
 
 @pytest.mark.asyncio
 async def test_list_tasks_validate_values(

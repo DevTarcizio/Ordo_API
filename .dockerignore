@@ -1,0 +1,3 @@
+__pycache__/
+.pytest_cache/
+migrations/versions/__pycache__/
