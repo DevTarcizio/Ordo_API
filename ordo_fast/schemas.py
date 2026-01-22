@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr
 
-from ordo_fast.models import TaskState
+from ordo_fast.models import TaskState, UserRoles
 
 
 class Message(BaseModel):
@@ -13,11 +13,13 @@ class UserSchema(BaseModel):
     username: str
     email: EmailStr
     password: str
+    role: UserRoles
 
 
 class UserPublic(BaseModel):
     username: str
     email: EmailStr
+    role: UserRoles
     id: int
     model_config = ConfigDict(from_attributes=True)
 

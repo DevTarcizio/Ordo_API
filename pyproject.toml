@@ -57,7 +57,6 @@ post_commit = 'git push origin main'
 create_migrations = 'alembic revision --autogenerate -m'
 migrate = 'alembic upgrade'
 demigrate = 'alembic downgrade'
-shell_db = 'python -m sqlite3 database.db'
 
 [tool.coverage.run]
 concurrency = ["thread", "greenlet"]

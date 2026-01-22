@@ -45,7 +45,9 @@ async def login_for_acess_token(
             status_code=HTTPStatus.UNAUTHORIZED, detail='Incorrect Password'
         )
 
-    access_token = create_access_token(data={'sub': user_db.email})
+    access_token = create_access_token(
+        data={'sub': user_db.email, 'role': user_db.role.value}
+    )
     return {'access_token': access_token, 'token_type': 'Bearer'}
 
 

@@ -16,7 +16,9 @@ DBsession = Annotated[AsyncSession, Depends(get_session)]
 Current_user = Annotated[User, Depends(get_current_user)]
 
 
-@router.post('/register', response_model=UserPublic, status_code=HTTPStatus.CREATED)
+@router.post(
+    '/register', response_model=UserPublic, status_code=HTTPStatus.CREATED
+)
 async def create_user(user: UserSchema, session: DBsession):
 
     # Verifica se no banco existe um username ou email igual ao enviado para
@@ -45,6 +47,7 @@ async def create_user(user: UserSchema, session: DBsession):
         username=user.username,
         email=user.email,
         password=get_password_hash(user.password),
+        role=user.role,
     )
 
     session.add(db_user)
