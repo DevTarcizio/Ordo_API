@@ -1,7 +1,7 @@
 import factory
 import factory.fuzzy
 
-from ordo_fast.enums import UserRoles
+from ordo_fast.enums import Classes, Origins, Ranks, UserRoles
 from ordo_fast.models import Task, TaskState, User
 
 
