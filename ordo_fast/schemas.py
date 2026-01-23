@@ -86,6 +86,25 @@ class CharacterSchema(BaseModel):
     atrib_strength: int
 
 
+class CharacterUpdate(BaseModel):
+    name: str | None = None
+    age: int | None = None
+    origin: Origins | None = None
+    character_class: Classes | None = None
+    rank: Ranks | None = None
+    nex_total: int | None = None
+    nex_class: int | None = None
+    nex_subclass: int | None = None
+    healthy_points: int | None = None
+    sanity_points: int | None = None
+    effort_points: int | None = None
+    atrib_agility: int | None = None
+    atrib_intellect: int | None = None
+    atrib_vitallity: int | None = None
+    atrib_presence: int | None = None
+    atrib_strength: int | None = None
+
+
 class CharacterPublic(BaseModel):
     name: str
     id: int

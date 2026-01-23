@@ -7,7 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ordo_fast.database import get_session
 from ordo_fast.models import Character, User
-from ordo_fast.schemas import CharacterList, CharacterPublic, CharacterSchema
+from ordo_fast.schemas import (
+    CharacterList,
+    CharacterPublic,
+    CharacterSchema,
+    CharacterUpdate,
+)
 from ordo_fast.security import get_current_user
 
 router = APIRouter(prefix='/characters', tags=['Characters'])
@@ -49,13 +54,13 @@ async def create_character(
 
 
 @router.get(
-    '/{user_id}/', response_model=CharacterList, status_code=HTTPStatus.OK
+    '/list', response_model=CharacterList, status_code=HTTPStatus.OK
 )
 async def read_characters_for_user_logged(
-    user_id: int, user: Current_user, session: DBsession
+    user: Current_user, session: DBsession
 ):
     db_characters = await session.scalars(
-        select(Character).where(Character.user_id == user_id)
+        select(Character).where(Character.user_id == user.id)
     )
 
     if not db_characters:
@@ -64,6 +69,34 @@ async def read_characters_for_user_logged(
         )
 
     return {'characters': db_characters}
+
+
+@router.patch(
+    '/{character_id}/', response_model=CharacterSchema, status_code=HTTPStatus.OK
+)
+async def update_character_info_via_patch(
+    character_id: int,
+    user: Current_user,
+    session: DBsession,
+    character: CharacterUpdate,
+): 
+    db_character = await session.scalar(
+        select(Character).where(Character.id == character_id)
+    )
+
+    if not db_character:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Character not found'
+        )
+    
+    for key, value in character.model_dump(exclude_unset=True).items():
+        setattr(db_character, key, value)
+
+    await session.commit()
+    await session.refresh(db_character)
+
+    return db_character
 
 
 @router.delete(
