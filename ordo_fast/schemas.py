@@ -112,4 +112,4 @@ class CharacterPublic(BaseModel):
 
 
 class CharacterList(BaseModel):
-    characters: list[CharacterPublic]
+    characters: list[CharacterSchema]
