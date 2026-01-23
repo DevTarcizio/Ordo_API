@@ -1,9 +1,14 @@
 from datetime import datetime
+from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 from ordo_fast.enums import Classes, Origins, Ranks
 from ordo_fast.models import TaskState, UserRoles
+
+
+class BaseSchema(BaseModel):
+    model_config = {'json_encoders': {Enum: lambda v: v.value}}
 
 
 class Message(BaseModel):
@@ -17,7 +22,7 @@ class UserSchema(BaseModel):
     role: UserRoles
 
 
-class UserPublic(BaseModel):
+class UserPublic(BaseSchema):
     username: str
     email: EmailStr
     role: UserRoles

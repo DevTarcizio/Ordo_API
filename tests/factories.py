@@ -1,6 +1,7 @@
 import factory
 import factory.fuzzy
 
+from ordo_fast.enums import UserRoles
 from ordo_fast.models import Task, TaskState, User
 
 
@@ -11,6 +12,7 @@ class UserFactory(factory.Factory):  # type: ignore
     username = factory.Sequence(lambda n: f'test{n}')  # type: ignore
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')  # type: ignore
     password = factory.LazyAttribute(lambda obj: f'{obj.username}1301')  # type: ignore
+    role = factory.fuzzy.FuzzyChoice(UserRoles)
 
 
 class TaskFactory(factory.Factory):  # type: ignore

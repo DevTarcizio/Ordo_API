@@ -6,11 +6,12 @@ from ordo_fast.schemas import UserPublic
 def test_create_user(client):
 
     response = client.post(
-        '/users/',
+        '/users/register',
         json={
             'username': 'alice',
             'email': 'alice@example.com',
             'password': 'secret',
+            'role': 'player',
         },
     )
 
@@ -18,17 +19,19 @@ def test_create_user(client):
     assert response.json() == {
         'username': 'alice',
         'email': 'alice@example.com',
+        'role': 'player',
         'id': 1,
     }
 
 
 def test_create_user_error_username(client, user_defined):
     response = client.post(
-        '/users/',
+        '/users/register',
         json={
             'username': 'alice',
             'email': 'alice@example.com',
             'password': 'secret',
+            'role': 'player',
         },
     )
 
@@ -38,11 +41,12 @@ def test_create_user_error_username(client, user_defined):
 
 def test_create_user_error_email(client, user_defined):
     response = client.post(
-        '/users/',
+        '/users/register',
         json={
             'username': 'bob',
             'email': 'alice@example.com',
             'password': 'secret',
+            'role': 'player',
         },
     )
 
@@ -51,14 +55,14 @@ def test_create_user_error_email(client, user_defined):
 
 
 def test_read_user(client, user, token):
-    user_schema = UserPublic.model_validate(user).model_dump()
+    user_schema = UserPublic.model_validate(user).model_dump(mode='json')
     response = client.get('/users/', headers={'Authorization': f'Bearer {token}'})
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'users': [user_schema]}
 
 
 def test_read_unique_user(client, user):
-    user_schema = UserPublic.model_validate(user).model_dump()
+    user_schema = UserPublic.model_validate(user).model_dump(mode='json')
     response = client.get('/users/1')
 
     assert response.status_code == HTTPStatus.OK
@@ -80,6 +84,7 @@ def test_update_user(client, user, token):
             'username': 'bob',
             'email': 'bob@example.com',
             'password': 'secret',
+            'role': 'player',
         },
     )
 
@@ -87,6 +92,7 @@ def test_update_user(client, user, token):
     assert response.json() == {
         'username': 'bob',
         'email': 'bob@example.com',
+        'role': 'player',
         'id': 1,
     }
 
@@ -99,6 +105,7 @@ def test_user_trying_update_another_user_error(client, other_user, token):
             'username': 'bob',
             'email': 'bob@example.com',
             'password': 'secret',
+            'role': 'player',
         },
     )
 
@@ -114,6 +121,7 @@ def test_update_user_integrity_error(client, user, other_user, token):
             'username': other_user.username,
             'email': other_user.email,
             'password': other_user.password,
+            'role': other_user.role.value,
         },
     )
 
@@ -131,6 +139,7 @@ def test_delete_user(client, user, token):
     assert response.json() == {
         'username': user.username,
         'email': user.email,
+        'role': user.role.value,
         'id': user.id,
     }
 

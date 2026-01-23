@@ -79,5 +79,5 @@ class Ranks(Enum):
     recruta = 'Recruta'
     operador = 'Operador'
     agente_especial = 'Agente Especial'
-    oficial_de_operacoes = 'Oficial de Operacoes'
+    oficial_de_operacoes = 'Oficial de Operações'
     agente_de_elite = 'Agente de Elite'

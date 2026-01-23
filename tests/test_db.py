@@ -3,6 +3,7 @@ from dataclasses import asdict
 import pytest
 from sqlalchemy import select
 
+from ordo_fast.enums import UserRoles
 from ordo_fast.models import User
 
 
@@ -11,7 +12,10 @@ async def test_create_user(session, mock_db_time):
 
     with mock_db_time(model=User) as time:
         new_user = User(
-            username='alice', email='alice@example.com', password='secret'
+            username='alice',
+            email='alice@example.com',
+            password='secret',
+            role=UserRoles.player,
         )
 
         session.add(new_user)
@@ -24,7 +28,9 @@ async def test_create_user(session, mock_db_time):
         'username': 'alice',
         'email': 'alice@example.com',
         'password': 'secret',
+        'role': UserRoles.player,
         'created_at': time,
         'updated_at': time,
         'tasks': [],
+        'characters': [],
     }

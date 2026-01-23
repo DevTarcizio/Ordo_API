@@ -53,12 +53,8 @@ async def create_character(
     return db_character
 
 
-@router.get(
-    '/list', response_model=CharacterList, status_code=HTTPStatus.OK
-)
-async def read_characters_for_user_logged(
-    user: Current_user, session: DBsession
-):
+@router.get('/list', response_model=CharacterList, status_code=HTTPStatus.OK)
+async def read_characters_for_user_logged(user: Current_user, session: DBsession):
     db_characters = await session.scalars(
         select(Character).where(Character.user_id == user.id)
     )
@@ -79,17 +75,16 @@ async def update_character_info_via_patch(
     user: Current_user,
     session: DBsession,
     character: CharacterUpdate,
-): 
+):
     db_character = await session.scalar(
         select(Character).where(Character.id == character_id)
     )
 
     if not db_character:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail='Character not found'
+            status_code=HTTPStatus.NOT_FOUND, detail='Character not found'
         )
-    
+
     for key, value in character.model_dump(exclude_unset=True).items():
         setattr(db_character, key, value)
 

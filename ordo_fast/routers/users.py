@@ -105,6 +105,7 @@ async def update_user(
         current_user.username = user.username
         current_user.email = user.email
         current_user.password = get_password_hash(user.password)
+        current_user.role = user.role
 
         # como o usuário já existe, nao fazemos um add, apenas o commit
         await session.commit()
