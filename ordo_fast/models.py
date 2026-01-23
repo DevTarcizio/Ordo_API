@@ -4,11 +4,9 @@ from sqlalchemy import Enum as SQLEnum
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, registry, relationship
 
-from ordo_fast.enums import TaskState, UserRoles, Origins, Classes, Trails, Ranks
+from ordo_fast.enums import Classes, Origins, Ranks, TaskState, UserRoles
 
 table_registry = registry()
-
-
 
 
 @table_registry.mapped_as_dataclass
@@ -36,9 +34,7 @@ class User:
         lazy='selectin',
     )
     characters: Mapped[list['Character']] = relationship(
-        init=False,
-        cascade='all, delete-orphan',
-        lazy='selectin'
+        init=False, cascade='all, delete-orphan', lazy='selectin'
     )
 
 
@@ -58,6 +54,7 @@ class Task:
         init=False, server_default=func.now(), onupdate=func.now()
     )
 
+
 @table_registry.mapped_as_dataclass
 class Character:
     __tablename__ = 'characters'
@@ -65,24 +62,29 @@ class Character:
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     name: Mapped[str]
     age: Mapped[int]
-    nex: Mapped[int]
+
     origin: Mapped[Origins] = mapped_column(
-        SQLEnum(Origins, name='charactersorigins', native_enum=True),
-        nullable=False
+        SQLEnum(Origins, name='origins', native_enum=False), nullable=False
     )
     character_class: Mapped[Classes] = mapped_column(
-        SQLEnum(Classes, name='charactersclasses', native_enum=True),
-        nullable=False
-    )
-    trail: Mapped[Trails] = mapped_column(
-        SQLEnum(Trails, name='characterstrails', native_enum=True),
-        nullable=False
+        SQLEnum(Classes, name='classes', native_enum=False), nullable=False
     )
     rank: Mapped[Ranks] = mapped_column(
-        SQLEnum(Ranks, name='charactersRanks', native_enum=True),
-        nullable=False
+        SQLEnum(Ranks, name='ranks', native_enum=False), nullable=False
     )
-    healty_points: Mapped[int]
-    sanity_points: Mapped[int]
-    effort_points: Mapped[int]
+
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+
+    nex_total: Mapped[int] = mapped_column(default=0)
+    nex_class: Mapped[int] = mapped_column(default=0)
+    nex_subclass: Mapped[int] = mapped_column(default=0)
+
+    healthy_points: Mapped[int] = mapped_column(default=0)
+    sanity_points: Mapped[int] = mapped_column(default=0)
+    effort_points: Mapped[int] = mapped_column(default=0)
+
+    atrib_agility: Mapped[int] = mapped_column(default=0)
+    atrib_intellect: Mapped[int] = mapped_column(default=0)
+    atrib_vitallity: Mapped[int] = mapped_column(default=0)
+    atrib_presence: Mapped[int] = mapped_column(default=0)
+    atrib_strength: Mapped[int] = mapped_column(default=0)

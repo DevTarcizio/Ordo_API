@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TaskState(Enum):
     todo = 'todo'
     doing = 'doing'
@@ -15,12 +16,44 @@ class Origins(Enum):
     academico = 'academico'
     agente_de_saude = 'agente_de_saude'
     amnesico = 'amnesico'
+    artista = 'artista'
+    atleta = 'atleta'
+    chef = 'chef'
+    cientista_forense = 'cientista_forense'
+    criminoso = 'crimonoso'
+    cultista_arrependido = 'cultista_arrependido'
+    desgarrado = 'desgarrado'
+    engenheiro = 'engenheiro'
+    executivo = 'executivo'
+    escritor = 'escritor'
+    investigador = 'investigador'
+    jornalista = 'jornalista'
+    lutador = 'lutador'
+    magnata = 'magnata'
+    mercenario = 'mercenario'
+    militar = 'militar'
+    operario = 'operario'
+    policial = 'policial'
+    professor = 'professor'
+    religioso = 'religioso'
+    servidor_publico = 'servidor_publico'
+    teorico_da_conspiracao = 'teorico_da_conspiracao'
+    ti = 'ti'
+    trabalhador_rural = 'trabalhador_rural'
+    trambiqueiro = 'trambiqueiro'
+    universitario = 'universitario'
+    vitima = 'vitima'
+    prodigio_paranormal = 'prodigio_paranormal'
+    oficial_militar = 'oficial_militar'
+
 
 class Classes(Enum):
     mundano = 'mundano'
     combatente = 'combatente'
     especialista = 'especialista'
     ocultista = 'ocultista'
+    transformado = 'transformado'
+
 
 class Trails(Enum):
     none = 'none'
@@ -31,6 +64,15 @@ class Trails(Enum):
     tropa_de_choque = 'tropa_de_choque'
     atirador_de_elite = 'atirador_de_elite'
     infiltrador = 'infiltrador'
+    medico_de_campo = 'medico_de_campo'
+    negociador = 'negociador'
+    tecnico = 'tecnico'
+    conduite = 'conduite'
+    flagelador = 'flagelador'
+    graduado = 'graduado'
+    intuitivo = 'intuitivo'
+    lamina_paranormal = 'lamina_paranormal'
+
 
 class Ranks(Enum):
     none = 'none'
