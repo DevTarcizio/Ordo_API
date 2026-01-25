@@ -59,11 +59,6 @@ async def read_characters_for_user_logged(user: Current_user, session: DBsession
         select(Character).where(Character.user_id == user.id)
     )
 
-    if not db_characters:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='User not found'
-        )
-
     return {'characters': db_characters}
 
 

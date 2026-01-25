@@ -1,3 +1,5 @@
+import random
+
 import factory
 import factory.fuzzy
 
@@ -23,3 +25,25 @@ class TaskFactory(factory.Factory):  # type: ignore
     description = factory.faker.Faker('text')
     state = factory.fuzzy.FuzzyChoice(TaskState)
     user_id = 1
+
+
+class CharacterFactory(factory.Factory):  # type: ignore
+    class Meta:  # type: ignore
+        model = dict
+
+    name = factory.faker.Faker('name')
+    age = factory.LazyFunction(lambda: random.randint(1, 999))  # type: ignore
+    origin = factory.Iterator([e.value for e in Origins])  # type: ignore
+    character_class = factory.Iterator([e.value for e in Classes])  # type: ignore
+    rank = factory.Iterator([e.value for e in Ranks])  # type: ignore
+    nex_total = factory.LazyFunction(lambda: random.randint(0, 100))  # type: ignore
+    nex_class = factory.LazyFunction(lambda: random.randint(0, 100))  # type: ignore
+    nex_subclass = factory.LazyFunction(lambda: random.randint(0, 100))  # type: ignore
+    healthy_points = factory.LazyFunction(lambda: random.randint(1, 999))  # type: ignore
+    sanity_points = factory.LazyFunction(lambda: random.randint(1, 999))  # type: ignore
+    effort_points = factory.LazyFunction(lambda: random.randint(1, 999))  # type: ignore
+    atrib_agility = factory.LazyFunction(lambda: random.randint(0, 5))  # type: ignore
+    atrib_intellect = factory.LazyFunction(lambda: random.randint(0, 5))  # type: ignore
+    atrib_vitallity = factory.LazyFunction(lambda: random.randint(0, 5))  # type: ignore
+    atrib_presence = factory.LazyFunction(lambda: random.randint(0, 5))  # type: ignore
+    atrib_strength = factory.LazyFunction(lambda: random.randint(0, 5))  # type: ignore
