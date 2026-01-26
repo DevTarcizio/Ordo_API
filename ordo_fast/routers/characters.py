@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ordo_fast.database import get_session
+from ordo_fast.enums import UserRoles
 from ordo_fast.models import Character, User
 from ordo_fast.schemas import (
     CharacterList,
@@ -62,6 +63,29 @@ async def read_characters_for_user_logged(user: Current_user, session: DBsession
     return {'characters': db_characters}
 
 
+@router.get(
+    '/{character_id}/', response_model=CharacterSchema, status_code=HTTPStatus.OK
+)
+async def read_character(
+    user: Current_user, session: DBsession, character_id: int
+):
+    db_character = await session.scalar(
+        select(Character).where(Character.id == character_id)
+    )
+
+    if not db_character:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Character not found'
+        )
+
+    if db_character.user_id != user.id and user.role != UserRoles.master:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail='This is not your character'
+        )
+
+    return db_character
+
+
 @router.patch(
     '/{character_id}/', response_model=CharacterSchema, status_code=HTTPStatus.OK
 )
@@ -80,6 +104,11 @@ async def update_character_info_via_patch(
             status_code=HTTPStatus.NOT_FOUND, detail='Character not found'
         )
 
+    if db_character.user_id != user.id and user.role != UserRoles.master:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail='This is not your character'
+        )
+
     for key, value in character.model_dump(exclude_unset=True).items():
         setattr(db_character, key, value)
 
@@ -89,9 +118,7 @@ async def update_character_info_via_patch(
     return db_character
 
 
-@router.delete(
-    '/{character_id}/', response_model=CharacterPublic, status_code=HTTPStatus.OK
-)
+@router.delete('/{character_id}/', status_code=HTTPStatus.OK)
 async def delete_character(
     character_id: int, user: Current_user, session: DBsession
 ):
@@ -104,12 +131,12 @@ async def delete_character(
             status_code=HTTPStatus.NOT_FOUND, detail='Character not found'
         )
 
-    if db_character.user_id != user.id:
+    if db_character.user_id != user.id and user.role != UserRoles.master:
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permission'
+            status_code=HTTPStatus.FORBIDDEN, detail='This is not your character'
         )
 
     await session.delete(db_character)
     await session.commit()
 
-    return db_character
+    return f'Character: {db_character.name} deleted'

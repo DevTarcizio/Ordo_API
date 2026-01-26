@@ -10,10 +10,10 @@ from testcontainers.postgres import PostgresContainer
 
 from ordo_fast.app import app
 from ordo_fast.database import get_session
-from ordo_fast.models import User, table_registry
+from ordo_fast.models import Character, User, table_registry
 from ordo_fast.security import get_password_hash
 
-from .factories import UserFactory
+from .factories import CharacterFactory, UserFactory
 
 
 @pytest.fixture
@@ -99,7 +99,7 @@ async def user_defined(session: AsyncSession):
 @pytest_asyncio.fixture
 async def user(session: AsyncSession):
     password = 'secret'
-    user_test = UserFactory(password=get_password_hash(password))
+    user_test = UserFactory(password=get_password_hash(password), role='player')
     session.add(user_test)
     await session.commit()
     await session.refresh(user_test)
@@ -112,7 +112,7 @@ async def user(session: AsyncSession):
 @pytest_asyncio.fixture
 async def other_user(session: AsyncSession):
     password = 'secret'
-    user_test = UserFactory(password=get_password_hash(password))
+    user_test = UserFactory(password=get_password_hash(password), role='player')
     session.add(user_test)
     await session.commit()
     await session.refresh(user_test)
@@ -122,11 +122,35 @@ async def other_user(session: AsyncSession):
     return user_test
 
 
+@pytest_asyncio.fixture
+async def character(session: AsyncSession, user: User):
+    character_test = CharacterFactory(user_id=user.id)
+    character_db = Character(**character_test)
+    session.add(character_db)
+    await session.commit()
+    await session.refresh(character_db)
+
+    return character_db
+
+
 @pytest.fixture
 def token(client, user):
     response = client.post(
         '/auth/token',
         data={'username': user.email, 'password': user.clean_password},
+    )
+
+    return response.json()['access_token']
+
+
+@pytest.fixture
+def other_token(client, other_user):
+    response = client.post(
+        '/auth/token',
+        data={
+            'username': other_user.email,
+            'password': other_user.clean_password,
+        },
     )
 
     return response.json()['access_token']
