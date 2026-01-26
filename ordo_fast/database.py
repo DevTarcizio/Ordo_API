@@ -6,7 +6,7 @@ engine = create_async_engine(
     Settings().DATABASE_URL,  # type: ignore
     pool_size=5,
     max_overflow=0,
-    pool_pre_ping=True, 
+    pool_pre_ping=True,
 )
 
 

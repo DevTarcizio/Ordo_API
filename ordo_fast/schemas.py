@@ -44,6 +44,7 @@ class FilterPage(BaseModel):
 
 
 class CharacterSchema(BaseModel):
+    id: int
     name: str
     age: int
     origin: Origins
