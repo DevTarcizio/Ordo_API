@@ -1,12 +1,6 @@
 from enum import Enum
 
 
-class TaskState(Enum):
-    todo = 'todo'
-    doing = 'doing'
-    done = 'done'
-
-
 class UserRoles(Enum):
     master = 'master'
     player = 'player'

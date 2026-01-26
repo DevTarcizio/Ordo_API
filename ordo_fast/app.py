@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from ordo_fast.database import close_engine
-from ordo_fast.routers import auth, characters, task, users
+from ordo_fast.routers import auth, characters, users
 from ordo_fast.schemas import Message
 
 app = FastAPI(title='Ordo Praesidium')
@@ -19,7 +19,6 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(users.router)
-app.include_router(task.router)
 app.include_router(characters.router)
 
 

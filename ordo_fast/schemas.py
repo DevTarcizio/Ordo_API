@@ -1,10 +1,9 @@
-from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 from ordo_fast.enums import Classes, Origins, Ranks
-from ordo_fast.models import TaskState, UserRoles
+from ordo_fast.models import UserRoles
 
 
 class BaseSchema(BaseModel):
@@ -42,34 +41,6 @@ class Token(BaseModel):
 class FilterPage(BaseModel):
     limit: int = 10  # Define a quantidade máxima de registro por página
     offset: int = 0  # Define quantos registros vai pular
-
-
-class FilterTask(FilterPage):
-    title: str | None = None
-    description: str | None = None
-    state: TaskState | None = None
-
-
-class TaskSchema(BaseModel):
-    title: str
-    description: str
-    state: TaskState
-
-
-class TaskPublic(TaskSchema):
-    id: int
-    created_at: datetime
-    updated_at: datetime
-
-
-class TaskList(BaseModel):
-    tasks: list[TaskPublic]
-
-
-class TaskUpdate(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    state: TaskState | None = None
 
 
 class CharacterSchema(BaseModel):

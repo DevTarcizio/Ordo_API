@@ -31,6 +31,5 @@ async def test_create_user(session, mock_db_time):
         'role': UserRoles.player,
         'created_at': time,
         'updated_at': time,
-        'tasks': [],
         'characters': [],
     }
