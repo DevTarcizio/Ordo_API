@@ -1,8 +1,8 @@
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, model_validator
 
-from ordo_fast.enums import Classes, Origins, Ranks
+from ordo_fast.enums import Classes, Origins, Ranks, Subclasses, Trails
 from ordo_fast.models import UserRoles
 
 
@@ -43,13 +43,14 @@ class FilterPage(BaseModel):
     offset: int = 0  # Define quantos registros vai pular
 
 
-class CharacterSchema(BaseModel):
-    id: int
+class CharacterCreate(BaseModel):
     name: str
     age: int
     origin: Origins
     character_class: Classes
     rank: Ranks
+    trail: Trails
+    subclass: Subclasses
     nex_total: int
     nex_class: int
     nex_subclass: int
@@ -61,6 +62,28 @@ class CharacterSchema(BaseModel):
     atrib_vitallity: int
     atrib_presence: int
     atrib_strength: int
+
+    @model_validator(mode='after')
+    def check_subclass_and_trail(self):
+        character_class = self.character_class
+        subclass = self.subclass
+        trail = self.trail
+
+        if subclass.value == character_class.value:
+            raise ValueError('Subclasse nao pode ser igual a classe')
+
+        allowed_trails = CLASS_TRAIL_MAP.get(character_class, [])
+        if trail not in allowed_trails:
+            raise ValueError(
+                f'{trail} não é permitida com a classe: {character_class}'
+            )
+
+        return self
+
+
+class CharacterRead(CharacterCreate):
+    id: int
+    user_id: int
 
 
 class CharacterUpdate(BaseModel):
@@ -82,11 +105,32 @@ class CharacterUpdate(BaseModel):
     atrib_strength: int | None = None
 
 
-class CharacterPublic(BaseModel):
-    name: str
-    id: int
-    user_id: int
-
-
 class CharacterList(BaseModel):
-    characters: list[CharacterSchema]
+    characters: list[CharacterRead]
+
+
+CLASS_TRAIL_MAP = {
+    Classes.mundano: [Trails.none],
+    Classes.transformado: [Trails.none],
+    Classes.combatente: [
+        Trails.aniquilador,
+        Trails.comandante_de_campo,
+        Trails.guerreiro,
+        Trails.operacoes_especiais,
+        Trails.tropa_de_choque,
+    ],
+    Classes.especialista: [
+        Trails.atirador_de_elite,
+        Trails.infiltrador,
+        Trails.medico_de_campo,
+        Trails.negociador,
+        Trails.tecnico,
+    ],
+    Classes.ocultista: [
+        Trails.conduite,
+        Trails.flagelador,
+        Trails.graduado,
+        Trails.intuitivo,
+        Trails.lamina_paranormal,
+    ],
+}

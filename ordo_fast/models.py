@@ -4,7 +4,7 @@ from sqlalchemy import Enum as SQLEnum
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, registry, relationship
 
-from ordo_fast.enums import Classes, Origins, Ranks, UserRoles
+from ordo_fast.enums import Classes, Origins, Ranks, Subclasses, Trails, UserRoles
 
 table_registry = registry()
 
@@ -42,16 +42,26 @@ class Character:
     age: Mapped[int]
 
     origin: Mapped[Origins] = mapped_column(
-        SQLEnum(Origins, name='origins', native_enum=False), nullable=False
+        SQLEnum(Origins, name='origins', native_enum=True), nullable=False
     )
     character_class: Mapped[Classes] = mapped_column(
-        SQLEnum(Classes, name='classes', native_enum=False), nullable=False
+        SQLEnum(Classes, name='classes', native_enum=True), nullable=False
     )
     rank: Mapped[Ranks] = mapped_column(
-        SQLEnum(Ranks, name='ranks', native_enum=False), nullable=False
+        SQLEnum(Ranks, name='ranks', native_enum=True), nullable=False
     )
-
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+
+    trail: Mapped[Trails] = mapped_column(
+        SQLEnum(Trails, name='trails', native_enum=True),
+        nullable=False,
+        default=Trails.none,
+    )
+    subclass: Mapped[Subclasses] = mapped_column(
+        SQLEnum(Subclasses, name='subclasses', native_enum=True),
+        nullable=False,
+        default=Subclasses.none,
+    )
 
     nex_total: Mapped[int] = mapped_column(default=0)
     nex_class: Mapped[int] = mapped_column(default=0)

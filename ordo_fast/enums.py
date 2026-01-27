@@ -49,6 +49,14 @@ class Classes(Enum):
     transformado = 'transformado'
 
 
+class Subclasses(Enum):
+    combatente = 'combatente'
+    especialista = 'especialista'
+    ocultista = 'ocultista'
+    transformado = 'transformado'
+    none = 'none'
+
+
 class Trails(Enum):
     none = 'none'
     aniquilador = 'aniquilador'

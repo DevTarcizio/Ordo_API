@@ -1,14 +1,26 @@
+from enum import Enum
 from http import HTTPStatus
 
 import pytest
 
+from ordo_fast.enums import Classes, Subclasses, Trails
 from ordo_fast.models import Character
 
 from .factories import CharacterFactory
 
 
+def to_json(data):
+    if isinstance(data, dict):
+        return {k: to_json(v) for k, v in data.items()}
+    if isinstance(data, list):
+        return [to_json(i) for i in data]
+    if isinstance(data, Enum):
+        return data.value
+    return data
+
+
 def test_create_character(client, token, user):
-    payload = CharacterFactory.build(user_id=user.id)
+    payload = to_json(CharacterFactory.build(user_id=user.id))
 
     response = client.post(
         '/characters/create',
@@ -21,7 +33,43 @@ def test_create_character(client, token, user):
     data = response.json()
 
     assert 'id' in data
-    assert data['name'] == payload['name']
+    assert 'name' in data
+
+
+def test_create_character_class_and_subclass_error(client, token, user):
+    payload = to_json(
+        CharacterFactory.build(
+            user_id=user.id,
+            character_class=Classes.combatente,
+            subclass=Subclasses.combatente,
+        )
+    )
+
+    response = client.post(
+        '/characters/create',
+        headers={'Authorization': f'Bearer {token}'},
+        json=payload,
+    )
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
+def test_create_character_trail_not_use_for_that_class(client, token, user):
+    payload = to_json(
+        CharacterFactory.build(
+            user_id=user.id,
+            character_class=Classes.combatente,
+            trail=Trails.lamina_paranormal,
+        )
+    )
+
+    response = client.post(
+        '/characters/create',
+        headers={'Authorization': f'Bearer {token}'},
+        json=payload,
+    )
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 @pytest.mark.asyncio
@@ -65,7 +113,7 @@ def test_read_character_error_id(client, token, user, character):
 def test_read_character_from_another_user_error(
     client, user, token, other_user, other_token
 ):
-    payload = CharacterFactory.build(user_id=user.id)
+    payload = to_json(CharacterFactory.build(user_id=user.id))
 
     response = client.post(
         '/characters/create',

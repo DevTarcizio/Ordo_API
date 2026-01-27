@@ -9,9 +9,9 @@ from ordo_fast.database import get_session
 from ordo_fast.enums import UserRoles
 from ordo_fast.models import Character, User
 from ordo_fast.schemas import (
+    CharacterCreate,
     CharacterList,
-    CharacterPublic,
-    CharacterSchema,
+    CharacterRead,
     CharacterUpdate,
 )
 from ordo_fast.security import get_current_user
@@ -22,10 +22,10 @@ Current_user = Annotated[User, Depends(get_current_user)]
 
 
 @router.post(
-    '/create/', response_model=CharacterPublic, status_code=HTTPStatus.CREATED
+    '/create/', response_model=CharacterRead, status_code=HTTPStatus.CREATED
 )
 async def create_character(
-    character: CharacterSchema, user: Current_user, session: DBsession
+    character: CharacterCreate, user: Current_user, session: DBsession
 ):
     db_character = Character(
         name=character.name,
@@ -33,6 +33,8 @@ async def create_character(
         origin=character.origin,
         character_class=character.character_class,
         rank=character.rank,
+        trail=character.trail,
+        subclass=character.subclass,
         user_id=user.id,
         nex_total=character.nex_total,
         nex_class=character.nex_class,
@@ -64,7 +66,7 @@ async def read_characters_for_user_logged(user: Current_user, session: DBsession
 
 
 @router.get(
-    '/{character_id}/', response_model=CharacterSchema, status_code=HTTPStatus.OK
+    '/{character_id}/', response_model=CharacterRead, status_code=HTTPStatus.OK
 )
 async def read_character(
     user: Current_user, session: DBsession, character_id: int
@@ -87,7 +89,7 @@ async def read_character(
 
 
 @router.patch(
-    '/{character_id}/', response_model=CharacterSchema, status_code=HTTPStatus.OK
+    '/{character_id}/', response_model=CharacterRead, status_code=HTTPStatus.OK
 )
 async def update_character_info_via_patch(
     character_id: int,
